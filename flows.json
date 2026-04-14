@@ -1,0 +1,616 @@
+[
+    {
+        "id": "tab_admin",
+        "type": "tab",
+        "label": "Moderação de Produtos",
+        "disabled": false,
+        "info": "Painel administrativo para moderação e exclusão de produtos"
+    },
+    {
+        "id": "ui_tab_admin",
+        "type": "ui_tab",
+        "name": "Administração do ReUse!",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "group_painel",
+        "type": "ui_group",
+        "name": "Painel de Produtos",
+        "tab": "ui_tab_admin",
+        "order": 1,
+        "disp": true,
+        "width": "24",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "55956df57ba16c76",
+        "type": "ui_base",
+        "theme": {
+            "name": "theme-light",
+            "lightTheme": {
+                "default": "#0094CE",
+                "baseColor": "#2e7d32",
+                "baseFont": "Arial,Arial,Helvetica,sans-serif",
+                "edited": true,
+                "reset": false
+            },
+            "darkTheme": {
+                "default": "#097479",
+                "baseColor": "#097479",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": false
+            },
+            "customTheme": {
+                "name": "Untitled Theme 1",
+                "default": "#4B7930",
+                "baseColor": "#4B7930",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+            },
+            "themeState": {
+                "base-color": {
+                    "default": "#0094CE",
+                    "value": "#2e7d32",
+                    "edited": true
+                },
+                "page-titlebar-backgroundColor": {
+                    "value": "#2e7d32",
+                    "edited": false
+                },
+                "page-backgroundColor": {
+                    "value": "#fafafa",
+                    "edited": false
+                },
+                "page-sidebar-backgroundColor": {
+                    "value": "#333333",
+                    "edited": false
+                },
+                "group-textColor": {
+                    "value": "#43b548",
+                    "edited": false
+                },
+                "group-borderColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "group-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "widget-textColor": {
+                    "value": "#111111",
+                    "edited": false
+                },
+                "widget-backgroundColor": {
+                    "value": "#2e7d32",
+                    "edited": false
+                },
+                "widget-borderColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "base-font": {
+                    "value": "Arial,Arial,Helvetica,sans-serif"
+                }
+            },
+            "angularTheme": {
+                "primary": "indigo",
+                "accents": "blue",
+                "warn": "red",
+                "background": "grey",
+                "palette": "light"
+            }
+        },
+        "site": {
+            "name": "Node-RED Dashboard",
+            "hideToolbar": "false",
+            "allowSwipe": "false",
+            "lockMenu": "false",
+            "allowTempTheme": "true",
+            "dateFormat": "DD/MM/YYYY",
+            "sizes": {
+                "sx": 48,
+                "sy": 48,
+                "gx": 6,
+                "gy": 6,
+                "cx": 6,
+                "cy": 6,
+                "px": 0,
+                "py": 0
+            }
+        }
+    },
+    {
+        "id": "6a8731e910e0db66",
+        "type": "ui_spacer",
+        "z": "tab_admin",
+        "name": "spacer",
+        "group": "group_painel",
+        "order": 2,
+        "width": 20,
+        "height": 1
+    },
+    {
+        "id": "inject_startup",
+        "type": "inject",
+        "z": "tab_admin",
+        "name": "Ao iniciar",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "load",
+        "payload": "",
+        "payloadType": "date",
+        "x": 390,
+        "y": 150,
+        "wires": [
+            [
+                "http_get_products"
+            ]
+        ]
+    },
+    {
+        "id": "btn_atualizar",
+        "type": "ui_button",
+        "z": "tab_admin",
+        "name": "Botão Atualizar",
+        "group": "group_painel",
+        "order": 1,
+        "width": 4,
+        "height": 1,
+        "passthru": false,
+        "label": "Atualizar Lista",
+        "tooltip": "Recarrega a lista de produtos",
+        "color": "#F5F5F5",
+        "bgcolor": "#2E7D32",
+        "className": "",
+        "icon": "",
+        "payload": "reload",
+        "payloadType": "str",
+        "topic": "load",
+        "topicType": "str",
+        "x": 390,
+        "y": 210,
+        "wires": [
+            [
+                "http_get_products"
+            ]
+        ]
+    },
+    {
+        "id": "http_get_products",
+        "type": "http request",
+        "z": "tab_admin",
+        "name": "GET /api/products",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://localhost:3000/api/products",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 610,
+        "y": 180,
+        "wires": [
+            [
+                "fn_formata_lista",
+                "fn_check_get_error"
+            ]
+        ]
+    },
+    {
+        "id": "fn_check_get_error",
+        "type": "function",
+        "z": "tab_admin",
+        "name": "Verifica erro GET",
+        "func": "if (msg.statusCode !== 200) {\n  msg.payload = \"❌ Erro ao carregar produtos (status \" + msg.statusCode + \")\";\n  node.error(msg.payload, msg);\n}\nreturn null;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 130,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "fn_formata_lista",
+        "type": "function",
+        "z": "tab_admin",
+        "name": "Formata tabela HTML",
+        "func": "var products = msg.payload;\n\nif (!Array.isArray(products)) {\n  node.warn('Resposta inesperada da API: ' + JSON.stringify(products));\n  msg.payload = '<p style=\"color:#D32F2F\">Erro: resposta inesperada da API.</p>';\n  return msg;\n}\n\nif (products.length === 0) {\n  msg.payload = '<p style=\"color:#505050;text-align:center;padding:20px\">Nenhum produto encontrado.</p>';\n  return msg;\n}\n\nvar html = `\n<style>\n  .prod-table { width:100%; border-collapse:collapse; font-family:sans-serif; font-size:14px; color: #212121; }\n  .prod-table th { background:#2E7D32; color:#F5F5F5; padding:10px 12px; text-align:left; }\n  .prod-table td { padding:9px 12px; border-bottom:1px solid #e0e0e0; vertical-align:middle; }\n  .prod-table tr:hover td { background:#f5f5f5; }\n  .badge { display:inline-block; padding:2px 8px; border-radius:12px; font-size:12px; font-weight:600; }\n  .badge-active { background:#c8e6c9; color:#2e7d32; }\n  .badge-inactive { background:#ffcdd2; color:#c62828; }\n  .btn-del { background:#D32F2F; color:#F5F5F5; border:none; padding:5px 14px;\n             border-radius:4px; cursor:pointer; font-size:13px; transition:background .2s; }\n  .btn-del:hover { background:#D32F2FFF; }\n  .prod-header { display:flex; align-items:center; justify-content:space-between;\n                 margin-bottom:12px; }\n  .prod-header h3 { margin:0; color:#2E7D32; font-size:16px; }\n  .prod-count { background:#66bb6a6c; color:#2E7D32; padding:3px 10px;\n                border-radius:12px; font-size:13px; font-weight:600; }\n</style>\n<div class=\"prod-header\">\n  <h3>📦 Produtos Cadastrados</h3>\n  <span class=\"prod-count\">${products.length} produto(s)</span>\n</div>\n<table class=\"prod-table\">\n  <thead>\n    <tr>\n      <th>#ID</th>\n      <th>Nome</th>\n      <th>Categoria</th>\n      <th>Preço</th>\n      <th>Status</th>\n      <th>Ação</th>\n    </tr>\n  </thead>\n  <tbody>\n`;\n\nproducts.forEach(function(p) {\n  var price = (p.price !== undefined)\n    ? 'R$ ' + parseFloat(p.price).toFixed(2).replace('.', ',')\n    : 'N/A';\n  var category = p.category || p.categoryName || '-';\n  var statusLabel = (p.status === 'ativo' || p.active === true)\n    ? '<span class=\"badge badge-active\">Ativo</span>'\n    : '<span class=\"badge badge-inactive\">Inativo</span>';\n\n  html += `<tr>\n    <td>${p.id}</td>\n    <td><strong>${p.name || p.title || 'Sem nome'}</strong></td>\n    <td>${category}</td>\n    <td>${price}</td>\n    <td>${statusLabel}</td>\n    <td>\n     <button class=\"btn-del\"\n  onclick=\"enviarDelete('${p.id}', '${(p.name || p.title || '').replace(/'/g, '')}')\">\n  🗑 Excluir\n</button>\n\n    </td>\n  </tr>`;\n});\n\nhtml += `</tbody></table>`;\nmsg.payload = html;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 180,
+        "wires": [
+            [
+                "ui_tabela_produtos"
+            ]
+        ]
+    },
+    {
+        "id": "ui_tabela_produtos",
+        "type": "ui_template",
+        "z": "tab_admin",
+        "group": "group_painel",
+        "name": "Tabela de Produtos",
+        "order": 4,
+        "width": 24,
+        "height": 11,
+        "format": "<div ng-bind-html=\"msg.payload | trusted\"></div>\n\n<script>\n    (function(scope) {\n\n    window.enviarDelete = function(id, name) {\n        scope.send({\n            payload: id,\n            topic: 'delete_product',\n            productName: name\n        });\n    };\n\n})(scope);\n</script>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1050,
+        "y": 180,
+        "wires": [
+            [
+                "sw_captura_clique"
+            ]
+        ]
+    },
+    {
+        "id": "sw_captura_clique",
+        "type": "switch",
+        "z": "tab_admin",
+        "name": "Filtra: delete_product",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "delete_product",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 610,
+        "y": 290,
+        "wires": [
+            [
+                "fn_salva_id"
+            ]
+        ]
+    },
+    {
+        "id": "fn_salva_id",
+        "type": "function",
+        "z": "tab_admin",
+        "name": "Salva ID no contexto",
+        "func": "flow.set('productToDelete', msg.payload);\nflow.set('productName', msg.productName || msg.payload);\nmsg.payload = msg.productName || ('ID: ' + msg.payload);\nconsole.log(msg)\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 290,
+        "wires": [
+            [
+                "ui_modal_confirmacao"
+            ]
+        ]
+    },
+    {
+        "id": "ui_modal_confirmacao",
+        "type": "ui_template",
+        "z": "tab_admin",
+        "group": "group_painel",
+        "name": "Modal de Confirmação",
+        "order": 3,
+        "width": 24,
+        "height": 2,
+        "format": "<style>\n  .modal-confirm {\n    background: #F5F5F5;\n    border: 1px solid #66BB6A;\n    border-radius: 8px;\n    padding: 16px 20px;\n    display: flex;\n    align-items: center;\n    justify-content: space-between;\n    gap: 12px;\n  }\n\n  .modal-confirm p {\n    margin: 0;\n    font-size: 14px;\n    color: #e65100;\n    font-weight: 600;\n  }\n\n  .btn-yes {\n    background: rgba(183, 28, 28, 0.705);\n    color: #F5F5F5;\n    border: none;\n    padding: 8px 20px;\n    border-radius: 4px;\n    cursor: pointer;\n    font-size: 14px;\n    font-weight: 600;\n  }\n\n  .btn-yes:hover {\n    background: #D32F2F;\n  }\n\n  .btn-no {\n    background: #757575;\n    color: #F5F5F5;\n    border: none;\n    padding: 8px 20px;\n    border-radius: 4px;\n    cursor: pointer;\n    font-size: 14px;\n  }\n\n  .btn-no:hover {\n    background: #424242;\n  }\n</style>\n<div class=\"modal-confirm\" ng-show=\"msg.payload\">\n  <p>Deseja excluir o produto: <em>{{msg.payload}}</em>?</p>\n  <div>\n    <button\n      class=\"btn-yes\"\n      ng-click=\"send({payload:true, topic:'confirm_delete'})\"\n    >\n      Excluir\n    </button>\n    &nbsp;\n    <button\n      class=\"btn-no\"\n      ng-click=\"send({payload:false, topic:'cancel_delete'})\"\n    >\n      Cancelar\n    </button>\n  </div>\n</div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "className": "",
+        "x": 1050,
+        "y": 290,
+        "wires": [
+            [
+                "sw_confirmacao"
+            ]
+        ]
+    },
+    {
+        "id": "sw_confirmacao",
+        "type": "switch",
+        "z": "tab_admin",
+        "name": "Confirmou?",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "confirm_delete",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "cancel_delete",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 610,
+        "y": 410,
+        "wires": [
+            [
+                "fn_monta_delete"
+            ],
+            [
+                "fn_cancelou"
+            ]
+        ]
+    },
+    {
+        "id": "fn_cancelou",
+        "type": "function",
+        "z": "tab_admin",
+        "name": "Limpa contexto",
+        "func": "flow.set('productToDelete', null);\nflow.set('productName', null);\nmsg.payload = '';\nmsg.topic   = 'clear_modal';\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 470,
+        "wires": [
+            [
+                "ui_modal_confirmacao"
+            ]
+        ]
+    },
+    {
+        "id": "fn_monta_delete",
+        "type": "function",
+        "z": "tab_admin",
+        "name": "Monta requisição DELETE",
+        "func": "var id = flow.get('productToDelete');\nif (!id) {\n  node.warn('Nenhum produto selecionado para exclusão');\n  return null;\n}\nmsg.url    = 'http://localhost:3000/api/products/' + id;\nmsg.method = 'DELETE';\nmsg.payload = {};\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 410,
+        "wires": [
+            [
+                "http_delete_product"
+            ]
+        ]
+    },
+    {
+        "id": "http_delete_product",
+        "type": "http request",
+        "z": "tab_admin",
+        "name": "DELETE /api/products/:id",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 1130,
+        "y": 400,
+        "wires": [
+            [
+                "sw_status_delete"
+            ]
+        ]
+    },
+    {
+        "id": "sw_status_delete",
+        "type": "switch",
+        "z": "tab_admin",
+        "name": "Status HTTP",
+        "property": "statusCode",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "between",
+                "v": "200",
+                "v2": "204",
+                "vt": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 610,
+        "y": 530,
+        "wires": [
+            [
+                "fn_sucesso"
+            ],
+            [
+                "fn_erro"
+            ]
+        ]
+    },
+    {
+        "id": "fn_sucesso",
+        "type": "function",
+        "z": "tab_admin",
+        "name": "Prepara msg sucesso",
+        "func": "var name = flow.get('productName') || flow.get('productToDelete');\nflow.set('productToDelete', null);\nflow.set('productName', null);\nmsg.payload = '✅ Produto \"' + name + '\" removido com sucesso!';\nmsg.topic   = 'clear_modal';\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 510,
+        "wires": [
+            [
+                "ui_toast_sucesso",
+                "ui_modal_confirmacao",
+                "trigger_reload"
+            ]
+        ]
+    },
+    {
+        "id": "fn_erro",
+        "type": "function",
+        "z": "tab_admin",
+        "name": "Prepara msg erro",
+        "func": "var status = msg.statusCode || 'desconhecido';\nmsg.payload = '❌ Erro ao excluir produto (HTTP ' + status + ')';\nnode.error(msg.payload, msg);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 570,
+        "wires": [
+            [
+                "ui_toast_erro"
+            ]
+        ]
+    },
+    {
+        "id": "ui_toast_sucesso",
+        "type": "ui_toast",
+        "z": "tab_admin",
+        "position": "top right",
+        "displayTime": "4",
+        "highlight": "",
+        "sendall": true,
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "raw": false,
+        "className": "",
+        "name": "Toast Sucesso",
+        "x": 1050,
+        "y": 510,
+        "wires": []
+    },
+    {
+        "id": "ui_toast_erro",
+        "type": "ui_toast",
+        "z": "tab_admin",
+        "position": "top right",
+        "displayTime": "5",
+        "highlight": "red",
+        "sendall": true,
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "raw": false,
+        "className": "",
+        "name": "Toast Erro",
+        "x": 1050,
+        "y": 570,
+        "wires": []
+    },
+    {
+        "id": "trigger_reload",
+        "type": "trigger",
+        "z": "tab_admin",
+        "name": "Aguarda e recarrega",
+        "op1": "",
+        "op2": "reload",
+        "op1type": "nul",
+        "op2type": "str",
+        "duration": "1",
+        "extend": false,
+        "overrideDelay": false,
+        "units": "s",
+        "reset": "",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 1,
+        "x": 610,
+        "y": 630,
+        "wires": [
+            [
+                "http_get_products"
+            ]
+        ]
+    },
+    {
+        "id": "catch_all",
+        "type": "catch",
+        "z": "tab_admin",
+        "name": "Captura erros globais",
+        "scope": null,
+        "uncaught": false,
+        "x": 390,
+        "y": 690,
+        "wires": [
+            [
+                "fn_log_erro"
+            ]
+        ]
+    },
+    {
+        "id": "fn_log_erro",
+        "type": "function",
+        "z": "tab_admin",
+        "name": "Loga erro",
+        "func": "node.warn('ERRO no fluxo: ' + msg.error.message);\nmsg.payload = '⚠️ Erro interno: ' + msg.error.message;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 690,
+        "wires": [
+            [
+                "ui_toast_erro"
+            ]
+        ]
+    },
+    {
+        "id": "834a5b519bf4b656",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-dashboard": "3.6.6"
+        }
+    }
+]
