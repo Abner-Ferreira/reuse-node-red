@@ -44,7 +44,7 @@ Este painel consome a API do projeto ReUse:
 Clone o projeto ReUse:
 
 ```
-git clone [https://github.com/Abner-Ferreira/reuse](https://github.com/Abner-Ferreira/reuse)
+git clone https://github.com/Abner-Ferreira/reuse
 cd reuse
 npm install
 npm run dev
